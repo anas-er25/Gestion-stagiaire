@@ -4,8 +4,8 @@ if (!isset($_SESSION['user'])) {
     header('Location: authentifier.php');
 }
 include('config/connexion.php');
-if (isset($_POST['supprimerstg'])) {
-    $stg = $_POST['supprimerstg'];
+if (isset($_GET['idStg'])) {
+    $stg = $_GET['idStg'];
     $stmt = $db->prepare('DELETE FROM stagiaire WHERE idStagiaire=?');
     $exec = $stmt->execute([$stg]);
     if ($exec) {
@@ -15,7 +15,6 @@ if (isset($_POST['supprimerstg'])) {
     <strong>Une erreur est servenue!!!</strong>
     <button type='button' class='btn-close' data-bs-dismiss='alert' aria-label='Close'></button>
 </div>";
-        exit;
     }
 }
 ?>
@@ -40,9 +39,13 @@ if (isset($_POST['supprimerstg'])) {
     <script type='text/javascript' src=''></script>
     <script type='text/javascript' src='https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js'></script>
     <script type='text/javascript' src='https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js'></script>
+    <link href="https://unpkg.com/aos@2.3.1/dist/aos.css" rel="stylesheet">
+    <script src="https://unpkg.com/aos@2.3.1/dist/aos.js"></script>
     <script>
-        function suppstgconfirm() {
-            confirm("Vous êtes sûr de supprimer le stagiaire?!");
+        function suppstgconfirm(idstg) {
+            if (confirm("Vous êtes sûr de supprimer le stagiaire?!")) {
+                window.location = 'espaceprivee.php?idStg=' + idstg + ';'
+            };
         }
     </script>
 </head>
@@ -71,8 +74,8 @@ if (isset($_POST['supprimerstg'])) {
         <div class="h2 font-weight-bold">
             <a class="btn btn-success" type="submit" href="InsererStagiaire.php">Ajouter</a>
         </div>
-        <div class="table-responsive">
-            <table class="table">
+        <div class="table-responsive" data-aos="fade-up">
+            <table class="table" >
                 <thead>
                     <tr>
                         <th scope="col">Photo Profil</th>
@@ -101,7 +104,7 @@ if (isset($_POST['supprimerstg'])) {
                         $tableau .= '<td class="pt-3 mt-1">' . $stagiaire['dateNaissance'] . '</td>';
                         $tableau .= '<td class="pt-3">' . $stagiaire['idFiliere'] . '</td>';
                         $tableau .= '<td class="pt-3"><a class="fa fa-pencil pl-3" href="ModifierStagiaire.php?idStagiaire=' . $stagiaire['idStagiaire'] . '"></a></td>';
-                        $tableau .= '<td class="pt-3"><form action="" enctype="multipart/form-data" method="post"><button type="submit" class="fa fa-trash pl-3" onClick="suppstgconfirm()" name="supprimerstg" value="' . $stagiaire['idStagiaire'] . '"></button></form></td>';
+                        $tableau .= '<td class="pt-3"><button type="button" class="fa fa-trash pl-3" onClick="suppstgconfirm(' . $stagiaire['idStagiaire'] . ')" name="idStg" value="' . $stagiaire['idStagiaire'] . '"></button></td>';
                         $tableau .= '</tr>';
                         $tableau .= '<tr id="spacing-row"><td></td></tr>';
                     }
@@ -113,6 +116,9 @@ if (isset($_POST['supprimerstg'])) {
         </div>
     </div>
     <script type='text/javascript'></script>
+    <script>
+        AOS.init();
+    </script>
 </body>
 
 </html>
